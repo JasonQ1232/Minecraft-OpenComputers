@@ -44,16 +44,19 @@ function check_altar(transposer, altar_side, min_capacity, target_info)
     end
 end
 
-function altar_extract(transposer, altar_side, output_side, target_info)
+function altar_extract(transposer, altar_side, output_side)
     local item_info = transposer.getStackInSlot(altar_side, 1)
     while item_info ~= nil do
         for slot=1, transposer.getInventorySize(output_side), 1 do
             local chest_item = transposer.getStackInSlot(output_side, slot)
             if (chest_item == nil) then
                 transposer.transferItem(altar_side, output_side, 1, 1, slot)
-            elseif (item_info.label == target_info.label) then
+                break
+            elseif (item_info.label == chest_item.label) then
                 transposer.transferItem(altar_side, output_side, 1, 1, slot)
+                break
             end
+            os.sleep(0.1)
         end
         item_info = transposer.getStackInSlot(altar_side, 1)
         os.sleep(0.25)
@@ -65,7 +68,9 @@ function altar_insert(transposer, altar_side, input_side, transfer_count)
         local chest_item = transposer.getStackInSlot(input_side, slot)
         if (chest_item ~= nil) then
             transposer.transferItem(input_side, altar_side, transfer_count, slot, 1)
+            break
         end
+        os.sleep(0.2)
     end
 end
 
@@ -86,8 +91,10 @@ while true do
         local target_info = check_target(transposer, target_side) 
         if (target_info ~= null) then
             local altar_info = check_altar(transposer, altar_side, min_capacity, target_info)
-            if (altar_info == "match") then
-                altar_extract(transposer, altar_side, output_side, target_info)
+            if (altar_info == "low") then
+                altar_extract(transposer, altar_side, input_side)
+            elseif (altar_info == "match") then
+                altar_extract(transposer, altar_side, output_side)
             elseif (altar_info == "empty") then
                 local insert = altar_insert(transposer, altar_side, input_side, transfer_count)
             end
