@@ -56,6 +56,14 @@ while true do
         rs(0)
     end
 
+    if (settings.debug == true) then
+        if (activate == true) then
+            term.write("Generators: Online")
+        else
+            term.write("Generators: Offline")
+        end
+    end
+
     for i in pairs(status) do
         status[i] = nil
     end
