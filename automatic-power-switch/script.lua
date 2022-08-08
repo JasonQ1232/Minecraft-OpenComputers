@@ -8,31 +8,37 @@ local settings = dofile("/usr/bin/automatic-power-switch/settings.cfg")
 local function rs(val)
     for address in pairs(settings.redstone_addresses) do
         local rs = component.proxy(component.get(settings.redstone_addresses[address]))
-        rs.setOutput(val)
+        rs.setOutput({val, val, val, val, val, val})
     end
 end
 
-capacitors = {}
+local capacitors = {}
 for address in pairs(settings.capacitor_addresses) do
     local capacitor = component.proxy(component.get(settings.capacitor_addresses[address]))
-    table.insert(capacitor)
+    table.insert(capacitors, capacitor)
 end
 
-local capacitors = { capacitorA, capacitorB }
 local status = {}
-
-active = false
+local active = false
 while true do
+    if (settings.debug == true) then
+        term.clear()
+    end
+
     for capacitor in pairs(capacitors) do
         max_energy = capacitors[capacitor].getMaxEnergyStored()
         cur_energy = capacitors[capacitor].getEnergyStored()
-        --term.write(capacitor .. " : " .. cur_energy .. "\n")
+        if (settings.debug == true) then
+            term.write(capacitors[capacitor].address .. "\n")
+            term.write("Max Energy: " .. math.floor(max_energy) .. "\n")
+            term.write("Cur Energy: " .. math.floor(cur_energy) .. "\n")
+            term.write("Percent: " .. math.floor((cur_energy / max_energy) * 100) .. "% \n")
+            term.write("------------------------------------\n")
+        end
         if (cur_energy < (max_energy * 0.40)) then
             table.insert(status, true)
-            --term.write("true" .. "\n")
         elseif (cur_energy > (max_energy * 0.80)) then
             table.insert(status, false)
-            --term.write("false" .. "\n")
         end
     end
 
@@ -40,7 +46,6 @@ while true do
     for i in pairs(status) do
         if (status[i] == true) then
             activate = true
-            --term.write("activate generator" .. "\n")
             break
         end
     end
