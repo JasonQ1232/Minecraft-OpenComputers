@@ -17,9 +17,9 @@ function check_target(transposer, target_side)
     return info
 end
 
-function check_altar(transposer, altar_side, min_capacity, target_info)
-    local capacity = transposer.getTankLevel(altar_side)
-    local item_info = transposer.getStackInSlot(altar_side, 1)
+function check_altar(transposer, altar_side_items, altar_side_fluids, min_capacity, target_info)
+    local capacity = transposer.getTankLevel(altar_side_fluids)
+    local item_info = transposer.getStackInSlot(altar_side_items, 1)
 
     if (capacity < min_capacity) then
         if (settings.debug == true) then
@@ -76,8 +76,13 @@ end
 
 while true do
     for index in pairs(settings.altars) do
-        local transposer = component.proxy(component.get(settings.altars[index].transposer_address))
-        local altar_side = settings.altars[index].transposer_altar_side
+        local transposer_altar = component.proxy(component.get(settings.altars[index].transposer_altar_address))
+        local transposer_io = component.proxy(component.get(settings.altars[index].transposer_io_address))
+        local transposer_target = component.proxy(component.get(settings.altars[index].transposer_target_address))
+
+        local altar_side_items = settings.altars[index].transposer_altar_item_side
+        local altar_side_fluids = settings.altars[index].transposer_altar_fluid_side
+
         local input_side = settings.altars[index].transposer_input_side
         local output_side = settings.altars[index].transposer_output_side
         local target_side = settings.altars[index].transposer_target_side
@@ -88,15 +93,15 @@ while true do
             term.clear()
             term.write(transposer.address .. "\n")
         end
-        local target_info = check_target(transposer, target_side) 
+        local target_info = check_target(transposer_target, target_side) 
         if (target_info ~= null) then
-            local altar_info = check_altar(transposer, altar_side, min_capacity, target_info)
+            local altar_info = check_altar(transposer_altar, altar_side_items, altar_side_fluids, min_capacity, target_info)
             if (altar_info == "low") then
-                altar_extract(transposer, altar_side, input_side)
+                altar_extract(transposer_io, altar_side_items, input_side)
             elseif (altar_info == "match") then
-                altar_extract(transposer, altar_side, output_side)
+                altar_extract(transposer_io, altar_side_items, output_side)
             elseif (altar_info == "empty") then
-                local insert = altar_insert(transposer, altar_side, input_side, transfer_count)
+                local insert = altar_insert(transposer_io, altar_side_items, input_side, transfer_count)
             end
         end
     end
