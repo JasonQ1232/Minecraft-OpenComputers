@@ -70,7 +70,7 @@ function altar_insert(transposer, altar_side, input_side, transfer_count)
             transposer.transferItem(input_side, altar_side, transfer_count, slot, 1)
             break
         end
-        os.sleep(0.2)
+        os.sleep(0.1)
     end
 end
 
