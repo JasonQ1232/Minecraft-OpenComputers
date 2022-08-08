@@ -1,6 +1,7 @@
 local os = require("os")
 local component = require("component")
 local term = require("term")
+local sides = require("sides")
 
 local settings = dofile("/usr/bin/automatic-power-switch/settings.cfg")
 

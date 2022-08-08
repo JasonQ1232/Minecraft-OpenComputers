@@ -19,9 +19,3 @@ function stop()
         end
     end
 end
-
-function readout()
-    local proc = thread.create(shell.execute, readout. os.getenv("shell"))
-    proc:detach()
-    table.insert(threads, proc)
-end
