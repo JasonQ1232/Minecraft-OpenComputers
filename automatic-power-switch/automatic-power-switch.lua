@@ -4,6 +4,7 @@ local thread = require "thread"
 
 local threads = {}
 local program = "/usr/bin/automatic-power-switch/script.lua"
+local readout = "/usr/bin/automatic-power-switch/readout.lua"
 
 function start()
     local proc = thread.create(shell.execute, program, os.getenv("shell"))
@@ -17,4 +18,10 @@ function stop()
             proc:kill()
         end
     end
+end
+
+function readout()
+    local proc = thread.create(shell.execute, readout. os.getenv("shell"))
+    proc:detach()
+    table.insert(threads, proc)
 end
