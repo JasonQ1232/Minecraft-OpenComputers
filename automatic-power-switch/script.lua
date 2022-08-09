@@ -25,7 +25,7 @@ while true do
     end
 
     for capacitor in pairs(capacitors) do
-        max_energy = capacitors[capacitor].getMaxEnergyStored()
+        max_energy = capacitors[capacitor].getEnergyCapacity()
         cur_energy = capacitors[capacitor].getEnergyStored()
         if (settings.debug == true) then
             term.write(capacitors[capacitor].address .. "\n")
