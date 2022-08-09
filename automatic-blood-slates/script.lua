@@ -17,28 +17,33 @@ function check_target(transposer, target_side)
     return info
 end
 
-function check_altar(transposer_fluids, transposer_items, altar_side_items, altar_side_fluids, min_capacity, target_info)
+function check_altar(transposer_fluids, transposer_items, altar_side_items, altar_side_fluids, stop_capacity, start_capacity, target_info)
     local capacity = transposer_fluids.getTankLevel(altar_side_fluids)
     local item_info = transposer_items.getStackInSlot(altar_side_items, 1)
 
-    if (capacity < min_capacity) then
+    if (capacity < stop_capacity) then
         if (settings.debug == true) then
-            term.write("Altar bellow minimum capacity.")
+            term.write("Altar bellow stop capacity. \n")
+        end
+        return "stop"
+    elseif (capacity < start_capacity) then
+        if (settings.debug == true) then
+            term.write("Altar bellow start capacity. \n")
         end
         return "low"
     elseif (item_info == nil) then
         if (settings.debug == true) then
-            term.write("Altar empty.")
+            term.write("Altar empty. \n")
         end
         return "empty"
     elseif (item_info.name == target_info.name and item_info.label == target_info.label) then
         if (settings.debug == true) then
-            term.write("Altar item match.")
+            term.write("Altar item match. \n")
         end
         return "match"
     else
         if (settings.debug == true) then
-            term.write("Alter contains non target item.")
+            term.write("Alter contains non target item. \n")
         end
         return "invalid"
     end
@@ -91,21 +96,25 @@ while true do
         local output_side = settings.altars[index].transposer_output_side
         local target_side = settings.altars[index].transposer_target_side
         local transfer_count = settings.altars[index].altar_transfer_count
-        local min_capacity = settings.altars[index].altar_min_capacity
+        local start_capacity = settings.altars[index].altar_start_capacity
+        local stop_capacity = settings.altars[index].altar_stop_capacity
+        local using_buffer = settings.altars[index].using_buffer
     
         if (settings.debug == true) then
             term.write(transposer_target.address .. "\n")
         end
         local target_info = check_target(transposer_target, target_side) 
         if (target_info ~= null) then
-            local altar_info = check_altar(transposer_fluids, transposer_items, altar_side_items, altar_side_fluids, min_capacity, target_info)
-            if (altar_info == "low" and transposer_items.getStackInSlot(altar_side_items, 1) ~= nil) then
-                altar_extract(transposer_items, altar_side_items, input_side)
+            local altar_info = check_altar(transposer_fluids, transposer_items, altar_side_items, altar_side_fluids, stop_capacity, start_capacity, target_info)
+            if (altar_info == "stop" and transposer_items.getStackInSlot(altar_side_items, 1) ~= nil) then
+                altar_extract(transposer_items, altar_side_items, output_side)
             elseif (altar_info == "match") then
                 altar_extract(transposer_items, altar_side_items, output_side)
             elseif (altar_info == "empty") then
                 local insert = altar_insert(transposer_items, altar_side_items, input_side, transfer_count)
             end
+        elseif (using_buffer == true and transposer_items.getStackInSlot(input_side, 1) ~= nil) then
+            transposer_items.transferItem(input_side, output_side, transposer_items.getSlotStackSize(input_side, 1),  1)
         end
     end
     os.sleep(3)
