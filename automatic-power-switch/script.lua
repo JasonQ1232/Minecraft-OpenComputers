@@ -34,17 +34,19 @@ while true do
             term.write("Percent: " .. math.floor((cur_energy / max_energy) * 100) .. "% \n")
             term.write("------------------------------------\n")
         end
-        if (cur_energy < (max_energy * 0.40)) then
+        if (cur_energy < (max_energy * 0.50)) then
             table.insert(status, true)
         elseif (cur_energy > (max_energy * 0.80)) then
             table.insert(status, false)
         end
+        os.sleep(1)
     end
 
     activate = false
     for i in pairs(status) do
         if (status[i] == true) then
             activate = true
+            os.sleep(1)
             break
         end
     end
@@ -65,6 +67,7 @@ while true do
 
     for i in pairs(status) do
         status[i] = nil
+        os.sleep(1)
     end
 
     os.sleep(5)

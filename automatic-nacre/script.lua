@@ -11,6 +11,7 @@ function contains_any_items(transposer, side)
         if (stack_size ~= nil and stack_size > 0) then
             return true
         end
+        os.sleep(0.2)
     end
     return false
 end
@@ -53,6 +54,7 @@ while true do
             redstone_collector.setOutput(redstone_collector_side, 0)
             settings.rigs[index].dropped = false
         end
+        os.sleep(0.5)
     end
     os.sleep(0.5)
 end
