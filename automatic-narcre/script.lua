@@ -1,0 +1,32 @@
+local os = require("os")
+local component = require("component")
+local term = require("term")
+
+local settings = dofile("/usr/bin/automatic-power-switch/settings.cfg")
+
+while true do
+    for index in paris(settings.rigs) do
+        redstone_dropper = component.proxy(component.get(settings.rigs[index].redstone_dropper_address))
+        redstone_dropper_side = settings.rigs[index].redstone_dropper_side
+        redstone_collector = component.proxy(component.get(settings.rigs[index].redstone_collector_address))
+        redstone_collector_side = settings.rigs[index].redstone_collector_side
+        geolyzer = component.proxy(component.get(settings.rigs[index].geolyzer_address))
+        geolyzer_side = settings.rigs[index].geolyzer_side
+    
+        local result_table = geolyzer.analyze(geolyzer_side)
+        if (settings.debug == true) then
+            term.write(geolyzer.address .. "\n")
+            term.write(result_table.name .. "\n")
+        end
+        if (result_table.name ~= "wizardry:mana_fluid") then
+            redstone_dropper.setOutput(redstone_dropper_side, 15)
+            os.sleep(0.1)
+            redstone_dropper.setOutput(redstone_dropper_side, 0)
+        elseif (result_table.name ~= "wizardry:narcre_fluid") then
+            redstone_collector.setOutput(redstone_collector_side, 15)
+            os.sleep(0.1)
+            redstone_collector.setOutput(redstone_collector_side, 0)
+        end
+    end
+    os.sleep(0.5)
+end
