@@ -8,7 +8,7 @@ while true do
     if (settings.debug == true) then
         term.clear()
     end
-    for index in paris(settings.rigs) do
+    for index in pairs(settings.rigs) do
         redstone_dropper = component.proxy(component.get(settings.rigs[index].redstone_dropper_address))
         redstone_dropper_side = settings.rigs[index].redstone_dropper_side
         redstone_collector = component.proxy(component.get(settings.rigs[index].redstone_collector_address))
@@ -25,7 +25,7 @@ while true do
             redstone_dropper.setOutput(redstone_dropper_side, 15)
             os.sleep(0.1)
             redstone_dropper.setOutput(redstone_dropper_side, 0)
-        elseif (result_table.name ~= "wizardry:narcre_fluid") then
+        elseif (result_table.name ~= "wizardry:nacre_fluid") then
             redstone_collector.setOutput(redstone_collector_side, 15)
             os.sleep(0.1)
             redstone_collector.setOutput(redstone_collector_side, 0)
