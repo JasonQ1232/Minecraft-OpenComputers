@@ -21,13 +21,19 @@ while true do
             term.write(geolyzer.address .. "\n")
             term.write(result_table.name .. "\n")
         end
-        if (result_table.name ~= "wizardry:mana_fluid") then
+        if (result_table.name == "wizardry:mana_fluid") then
+            if (settings.debug == true) then
+                term.write("Dropping gold nugget." .. "\n")
+            end
             redstone_dropper.setOutput(redstone_dropper_side, 15)
-            os.sleep(0.1)
+            os.sleep(0.5)
             redstone_dropper.setOutput(redstone_dropper_side, 0)
-        elseif (result_table.name ~= "wizardry:nacre_fluid") then
+        elseif (result_table.name == "wizardry:nacre_fluid") then
+            if (settings.debug == true) then
+                term.write("Collecting Nacre." .. "\n")
+            end
             redstone_collector.setOutput(redstone_collector_side, 15)
-            os.sleep(0.1)
+            os.sleep(0.5)
             redstone_collector.setOutput(redstone_collector_side, 0)
         end
     end
