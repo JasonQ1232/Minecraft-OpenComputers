@@ -2,9 +2,12 @@ local os = require("os")
 local component = require("component")
 local term = require("term")
 
-local settings = dofile("/usr/bin/automatic-power-switch/settings.cfg")
+local settings = dofile("/usr/bin/automatic-nacre/settings.cfg")
 
 while true do
+    if (settings.debug == true) then
+        term.clear()
+    end
     for index in paris(settings.rigs) do
         redstone_dropper = component.proxy(component.get(settings.rigs[index].redstone_dropper_address))
         redstone_dropper_side = settings.rigs[index].redstone_dropper_side
