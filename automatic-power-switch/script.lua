@@ -4,6 +4,18 @@ local term = require("term")
 
 local settings = dofile("/usr/bin/automatic-power-switch/settings.cfg")
 
+local function display_info(data)
+    for index in pairs(data) do
+        os.sleep(0.1)
+        term.write(index .. "\n")
+        term.write("Max Energy: " .. data[index].maxEnergy .. "\n")
+        term.write("Current Energy: " .. data[index].curEnergy .. "\n")
+        term.write("Percent: " .. data[index].percent .. "\n")
+        term.write("----------------------------------------------------------------\n")
+        --os.sleep(0.2)
+    end
+end
+
 local function rs(val)
     for address in pairs(settings.redstone_addresses) do
         local rs = component.proxy(component.get(settings.redstone_addresses[address]))
@@ -18,6 +30,7 @@ for address in pairs(settings.capacitor_addresses) do
 end
 
 local status = {}
+local readout_data = {}
 local active = false
 while true do
     if (settings.debug == true) then
@@ -27,12 +40,12 @@ while true do
     for capacitor in pairs(capacitors) do
         max_energy = capacitors[capacitor].getEnergyCapacity()
         cur_energy = capacitors[capacitor].getEnergyStored()
-        if (settings.debug == true) then
-            term.write(capacitors[capacitor].address .. "\n")
-            term.write("Max Energy: " .. math.floor(max_energy) .. "\n")
-            term.write("Cur Energy: " .. math.floor(cur_energy) .. "\n")
-            term.write("Percent: " .. math.floor((cur_energy / max_energy) * 100) .. "% \n")
-            term.write("------------------------------------\n")
+        if (settings.debug == true or settings.readout == true) then
+            address = capacitors[capacitor].address
+            readout_data[address] = {}
+            readout_data[address].maxEnergy = math.floor(max_energy)
+            readout_data[address].curEnergy = math.floor(cur_energy)
+            readout_data[address].percent = math.floor((cur_energy / max_energy) * 100)
         end
         if (cur_energy < (max_energy * 0.50)) then
             table.insert(status, true)
@@ -68,6 +81,11 @@ while true do
     for i in pairs(status) do
         status[i] = nil
         os.sleep(1)
+    end
+    
+    if (settings.debug == true or settings.readout == true) then
+        term.clear()
+        display_info(readout_data)
     end
 
     os.sleep(5)
