@@ -10,7 +10,7 @@ drop_rs = component.proxy(component.get(settings.drop_rs_address))
 drop_side = settings.drop_rs_side
 
 while true do
-    if (ed_rs.getInput(ed_side) == 0 && mp_rs.getComparatorInput(mp_side) >= 14) then
+    if (ed_rs.getInput(ed_side) == 0 and mp_rs.getComparatorInput(mp_side) >= 14) then
         drop_rs.setOutput(drop_side, 15)
         os.sleep(0.1)
         drop_rs.setOutput(drop_side, 0)
