@@ -1,6 +1,8 @@
-local shell = require "shell"
+local component = require("component") 
 local os = require("os")
 local term = require("term")
+
+local settings = dofile("/usr/bin/automatic-agglomeration/settings.cfg")
 
 ed_rs = component.proxy(component.get(settings.ed_rs_address))
 ed_side = settings.ed_rs_side
